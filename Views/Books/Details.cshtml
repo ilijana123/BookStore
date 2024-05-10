@@ -1,0 +1,101 @@
+﻿@model MVCBookk.Models.Book
+
+@{
+    ViewData["Title"] = "Details";
+}
+
+<h1>Details</h1>
+
+<div>
+    <h4>Book</h4>
+    <hr />
+    <dl class="row">
+        <dt class="col-sm-2">
+            @Html.DisplayNameFor(model => model.FrontPage)
+        </dt>
+        <dt class="col-sm-10">
+            <div class="col-md-6">
+                <img src="@Html.DisplayFor(model=>model.FrontPage)" width="50%" alt="" @Html.DisplayFor(model=>model.Title) "             />
+            </div>
+        </dt>
+        <dt class="col-sm-2">
+            @Html.DisplayNameFor(model => model.Title)
+        </dt>
+        <dd class="col-sm-10">
+            @Html.DisplayFor(model => model.Title)
+        </dd>
+        <dt class="col-sm-2">
+            @Html.DisplayNameFor(model => model.Author)
+        </dt>
+        <dd class="col-sm-10">
+            @if (Model.AuthorId != null)
+            {
+            <a asp-controller="Authors" asp-action="Details" asp-route-id="@Model.AuthorId">@Html.DisplayFor(model => model.Author.FullName)</a>
+            }
+        </dd>
+        <dt class="col-sm-2">
+            @Html.DisplayNameFor(model => model.YearPublished)
+        </dt>
+        <dd class="col-sm-10">
+            @Html.DisplayFor(model => model.YearPublished)
+        </dd>
+
+        <dt class="col-sm-2">
+            @Html.DisplayNameFor(model => model.AverageRating)
+        </dt>
+        <dd class="col-sm-10">
+            @if (ViewBag.AverageRating != null)
+    {
+            <span>@ViewBag.AverageRating</span>
+    }
+    else
+    {
+            <span>No reviews</span>
+    }
+        </dd>
+        <dt class="col-sm-2">
+            @Html.DisplayNameFor(model => model.Genres)
+        </dt>
+        <dd class="col-sm-10">
+            @if (Model.Genres != null && Model.Genres.Any())
+    {
+        foreach (var bookGenre in Model.Genres)
+        {
+            if (bookGenre != null && bookGenre.Genre != null)
+            {
+            <a asp-controller="Genres" asp-action="Details" asp-route-id="@bookGenre.Genre.Id">@bookGenre.Genre.GenreName</a><br />
+            }
+        }
+    }
+        </dd>
+        </dd>
+        <dt class="col-sm-2">
+            @Html.DisplayNameFor(model => model.Description)
+        </dt>
+        <dd class="col-sm-10">
+            @Html.DisplayFor(model => model.Description)
+        </dd>
+        <dt class="col-sm-2">
+            @Html.DisplayNameFor(model => model.Publisher)
+        </dt>
+        <dd class="col-sm-10">
+            @Html.DisplayFor(model => model.Publisher)
+        </dd>
+        <dt class="col-sm-2">
+            @Html.DisplayNameFor(model => model.NumPages)
+        </dt>
+        <dd class="col-sm-10">
+            @Html.DisplayFor(model => model.NumPages)
+        </dd>
+        <dt class="col-sm-2">
+            @Html.DisplayNameFor(model => model.DownloadUrl)
+        </dt>
+        <dd class="col-sm-10">
+            <a href="@Html.DisplayFor(model => model.DownloadUrl)">Download</a>
+        </dd>
+    </dl>
+</div>
+<div>
+    <a asp-action="Edit" asp-route-id="@Model?.Id">Edit</a> |
+    <a asp-action="Index">Back to List</a>
+</div>
