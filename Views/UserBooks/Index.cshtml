@@ -1,41 +1,141 @@
-﻿@model IEnumerable<MVCBookk.Models.UserBooks>
+﻿@using Microsoft.AspNetCore.Identity
+@using MVCBookk.Areas.Identity.Data
+@inject UserManager<MVCBookkUser> UserManager
+@model IEnumerable<MVCBookk.Models.UserBooks>
 
 @{
-    ViewData["Title"] = "Index";
+    ViewData["Title"] = "Cart";
+    // Get the current user
+    var currentUser = UserManager.GetUserAsync(User).Result;
+    // Filter user books by the current user's ID
+    var userBooks = Model.Where(ub => ub.AppUser == currentUser.Id);
 }
 
-<h1>Index</h1>
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>@ViewData["Title"]</title>
+    <link href="https://stackpath.bootstrapcdn.com/bootstrap/4.5.2/css/bootstrap.min.css" rel="stylesheet">
+    <style>
+        body {
+            background-color: #f8f9fa;
+            padding-top: 50px;
+        }
 
-<p>
-    <a asp-action="Create">Create New</a>
-</p>
-<table class="table">
-    <thead>
-        <tr>
-            <th>
-                @Html.DisplayNameFor(model => model.AppUser)
-            </th>
-            <th>
-                @Html.DisplayNameFor(model => model.Book)
-            </th>
-            <th></th>
-        </tr>
-    </thead>
-    <tbody>
-@foreach (var item in Model) {
-        <tr>
-            <td>
-                @Html.DisplayFor(modelItem => item.AppUser)
-            </td>
-            <td>
-                @Html.DisplayFor(modelItem => item.Book.Title)
-            </td>
-            <td>
-                <a asp-action="Edit" asp-route-id="@item.Id">Edit</a> |
-                <a asp-action="Details" asp-route-id="@item.Id">Details</a> |
-                <a asp-action="Delete" asp-route-id="@item.Id">Delete</a>
-            </td>
-        </tr>
-}
-    </tbody>
-</table>
+        .container {
+            max-width: 1000px;
+            margin: auto;
+        }
+
+        .table-responsive {
+            margin-top: 20px;
+        }
+
+        .table {
+            background-color: #fff;
+            border-radius: 10px;
+            box-shadow: 0 0 20px rgba(0, 0, 0, 0.1);
+        }
+
+            .table thead th {
+                background-color: #343a40;
+                color: #fff;
+                border-color: #343a40;
+            }
+
+            .table tbody td {
+                vertical-align: middle;
+            }
+
+        .btn {
+            padding: 5px 10px;
+        }
+
+        .btn-primary {
+            background-color: #007bff;
+            border-color: #007bff;
+        }
+
+            .btn-primary:hover {
+                background-color: #0056b3;
+                border-color: #0056b3;
+            }
+
+        .btn-info {
+            background-color: #17a2b8;
+            border-color: #17a2b8;
+        }
+
+            .btn-info:hover {
+                background-color: #117a8b;
+                border-color: #117a8b;
+            }
+
+        .btn-danger {
+            background-color: #dc3545;
+            border-color: #dc3545;
+        }
+
+            .btn-danger:hover {
+                background-color: #bd2130;
+                border-color: #bd2130;
+            }
+
+        .book-title {
+            color: black; /* Blue color */
+            text-decoration: none; /* Remove underline */
+            transition: color 0.3s; /* Smooth transition for color change */
+        }
+
+            .book-title:hover {
+                color: #0056b3; /* Darker blue color on hover */
+                text-decoration: none; /* Remove underline on hover */
+            }
+    </style>
+</head>
+<body>
+    <div class="container">
+        <h1 class="text-center">@ViewData["Title"]</h1>
+        <div class="table-responsive">
+            <table class="table table-striped">
+                <thead>
+                    <tr>
+                        <th>Book Title</th>
+                        <th>Front Page</th>
+                        <th>Download</th>
+                        <th>User</th>
+                        <th>Actions</th>
+                    </tr>
+                </thead>
+                <tbody>
+                    @foreach (var item in userBooks)
+                    {
+                        <tr>
+                            <td>
+                                <a href="@Url.Action("Details", "Books", new { id = item.BookId })" class="book-title">@Html.DisplayFor(modelItem => item.Book.Title)</a>
+                            </td>
+                            <td>
+                                <img src="@item.Book.FrontPage" alt="Front Page" style="max-width: 100px; max-height: 100px;" />
+                            </td>
+                            <td>
+                                <a href="@Html.DisplayFor(modelItem => item.Book.DownloadUrl)" class="btn btn-dark">Download</a>
+                            </td>
+                            <td>@UserManager.FindByIdAsync(item.AppUser).Result.Email</td>
+                            <td>
+                                <a asp-action="Edit" asp-route-id="@item.Id" class="btn btn-primary">Edit</a> |
+                                <a asp-action="Details" asp-route-id="@item.Id" class="btn btn-info">Details</a> |
+                                <a asp-action="Delete" asp-route-id="@item.Id" class="btn btn-danger">Delete</a>
+                            </td>
+                        </tr>
+                    }
+                </tbody>
+            </table>
+        </div>
+    </div>
+
+    <script src="https://code.jquery.com/jquery-3.5.1.slim.min.js"></script>
+    <script src="https://stackpath.bootstrapcdn.com/bootstrap/4.5.2/js/bootstrap.min.js"></script>
+</body>
+</html>

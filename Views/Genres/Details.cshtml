@@ -4,21 +4,65 @@
     ViewData["Title"] = "Details";
 }
 
-<h1>Details</h1>
 
-<div>
-    <h4>Genre</h4>
-    <hr />
-    <dl class="row">
-        <dt class = "col-sm-2">
-            @Html.DisplayNameFor(model => model.GenreName)
-        </dt>
-        <dd class = "col-sm-10">
-            @Html.DisplayFor(model => model.GenreName)
-        </dd>
-    </dl>
-</div>
-<div>
-    <a asp-action="Edit" asp-route-id="@Model?.Id">Edit</a> |
-    <a asp-action="Index">Back to List</a>
+<style>
+    .container {
+        display: flex;
+        justify-content: center;
+        align-items: center;
+        height: 100vh;
+        margin-top: 5px;
+    }
+
+    .card {
+        width: 100%; /* Make the card wider */
+        padding: 10px;
+        border-radius: 10px;
+        box-shadow: 0 0 20px rgba(0, 0, 0, 0.1);
+    }
+
+    .card-title {
+        margin-bottom: 20px;
+    }
+
+    .row {
+        margin-bottom: 20px;
+    }
+
+    .btn-danger,
+    .btn-outline-secondary {
+        padding: 10px 20px;
+        border-radius: 5px;
+        cursor: pointer;
+    }
+
+    .btn-danger {
+        background-color: #dc3545;
+        color: white;
+        border: none;
+    }
+
+    .btn-outline-secondary {
+        border: 1px solid #6c757d;
+        color: #6c757d;
+        background-color: transparent;
+    }
+</style>
+
+<div class="container">
+    <div class="details-container">
+        <h1>Genre Details</h1>
+        <div>
+            <h4>Genre</h4>
+            <hr />
+            <dl class="row">
+                <dt class="col-sm-2">Genre Name:</dt>
+                <dd class="col-sm-10">@Html.DisplayFor(model => model.GenreName)</dd>
+            </dl>
+        </div>
+        <div>
+            <a class="btn btn-primary" asp-action="Edit" asp-route-id="@Model?.Id">Edit</a>
+            <a class="btn btn-danger" asp-action="Index" asp-route-id="@Model?.Id">Back to List</a>
+        </div>
+    </div>
 </div>

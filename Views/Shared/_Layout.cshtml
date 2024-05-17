@@ -1,79 +1,94 @@
-﻿<!DOCTYPE html>
-<html lang="en">
-<head>
-    <meta charset="utf-8" />
-    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
-    <link href="https://cdn.jsdelivr.net/npm/select2@4.1.0-rc.0/dist/css/select2.min.css" rel="stylesheet" />
-    <title>@ViewData["Title"] - MVCBook</title>
-    <link rel="stylesheet" href="~/lib/bootstrap/dist/css/bootstrap.min.css" />
-    <link rel="stylesheet" href="~/css/site.css" asp-append-version="true" />
-    <link rel="stylesheet" href="~/MVCBook.styles.css" asp-append-version="true" />
+﻿@using Microsoft.AspNetCore.Identity
+@using MVCBookk.Areas.Identity.Data
 
-    <style>
-        /* Custom styles for the navbar */
-        .navbar,.navbar-brand {
-            padding: 20px 0; /* Increase the top and bottom padding */
-            font-size: 30px; /* Increase the font size of navbar links */
-        }
+@inject SignInManager<MVCBookkUser> SignInManager
+ @inject UserManager<MVCBookkUser> UserManager
 
-        .navbar-brand, .navbar-nav .nav-link {
-            color: black !important; /* Change the text color of navbar links */
-            font-weight: bold; /* Make the text bold */
-            text-transform: uppercase; /* Convert text to uppercase */5
-            padding: 50px 70px; /* Increase padding around navbar items */
-        }
+            <!DOCTYPE html>
+            <html lang="en">
+            <head>
+                <meta charset="utf-8" />
+                <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+                <link href="https://cdn.jsdelivr.net/npm/select2@4.1.0-rc.0/dist/css/select2.min.css" rel="stylesheet" />
+                <title>@ViewData["Title"] -Book Store</title>
+                <link rel="stylesheet" href="~/lib/bootstrap/dist/css/bootstrap.min.css" />
+                <link rel="stylesheet" href="~/css/site.css" asp-append-version="true" />
+                <link rel="stylesheet" href="~/MVCBook.styles.css" asp-append-version="true" />
 
-        .navbar-nav .nav-item {
-            margin-right: 100px; /* Increase space between navbar items */
-        }
-    </style>
-</head>
-<body>
-    <header>
-        <nav class="navbar navbar-expand-sm navbar-toggleable-sm navbar-light bg-white border-bottom box-shadow mb-3">
-            <div class="container-fluid">
-                <a class="navbar-brand" asp-area="" asp-controller="Home" asp-action="Index">Books List</a>
-                <button class="navbar-toggler" type="button" data-bs-toggle="collapse" data-bs-target=".navbar-collapse" aria-controls="navbarSupportedContent"
-                        aria-expanded="false" aria-label="Toggle navigation">
-                    <span class="navbar-toggler-icon"></span>
-                </button>
-                <div class="navbar-collapse collapse d-sm-inline-flex justify-content-between">
-                    <ul class="navbar-nav flex-grow-1">
-                        <li class="nav-item">
-                            <a class="nav-link text-dark" asp-area="" asp-controller="Books" asp-action="Index">Books</a>
-                        </li>
-                        <li class="nav-item">
-                            <a class="nav-link text-dark" asp-area="" asp-controller="Authors" asp-action="Index">Authors</a>
-                        </li>
-                        <li class="nav-item">
-                            <a class="nav-link text-dark" asp-area="" asp-controller="Genres" asp-action="Index">Genres</a>
-                        </li>
-                        <li class="nav-item">
-                            <a class="nav-link text-dark" asp-area="" asp-controller="Reviews" asp-action="Index">Reviews</a>
-                        </li>
-                        <li class="nav-item">
-                            <a class="nav-link text-dark" asp-area="" asp-controller="UserBooks" asp-action="Index">UsersBooks</a>
-                        </li>
+                <style>
+                    /* Custom styles for the navbar */
+                    .navbar, .navbar-brand {
+                        padding: 20px 0; /* Increase the top and bottom padding */
+                        font-size: 30px; /* Increase the font size of navbar links */
+                    }
 
-                    </ul>
+                    .navbar-brand, .navbar-nav .nav-link {
+                        color: black !important; /* Change the text color of navbar links */
+                        font-weight: bold; /* Make the text bold */
+                        text-transform: uppercase; /* Convert text to uppercase */
+                        5 padding: 50px 70px; /* Increase padding around navbar items */
+                    }
+
+                    .navbar-nav .nav-item {
+                        margin-right: 100px; /* Increase space between navbar items */
+                    }
+                </style>
+            </head>
+            <body>
+                <header>
+                    <nav class="navbar navbar-expand-sm navbar-toggleable-sm navbar-light bg-white border-bottom box-shadow mb-3">
+                        <div class="container-fluid">
+                            <a class="navbar-brand" asp-area="" asp-controller="Home" asp-action="Index">Home </a>
+                            <button class="navbar-toggler" type="button" data-bs-toggle="collapse" data-bs-target=".navbar-collapse" aria-controls="navbarSupportedContent"
+                                    aria-expanded="false" aria-label="Toggle navigation">
+                                <span class="navbar-toggler-icon"></span>
+                            </button>
+                            <div class="navbar-collapse collapse d-sm-inline-flex justify-content-between">
+                                <ul class="navbar-nav flex-grow-1">
+                                    <li class="nav-item">
+                                        <a class="nav-link text-dark" asp-area="" asp-controller="Books" asp-action="Index">Books</a>
+                                    </li>
+                                    <li class="nav-item">
+                                        <a class="nav-link text-dark" asp-area="" asp-controller="Authors" asp-action="Index">Authors</a>
+                                    </li>
+                                    <li class="nav-item">
+                                        <a class="nav-link text-dark" asp-area="" asp-controller="Genres" asp-action="Index">Genres</a>
+                                    </li>
+                                                                        @if (SignInManager.IsSignedIn(User) && User.IsInRole("Admin"))
+{
+                                    <li class="nav-item">
+                                        <a class="nav-link text-dark" asp-area="" asp-controller="Reviews" asp-action="Index">Reviews</a>
+                                    </li>
+}
+                                    @if (SignInManager.IsSignedIn(User) && !User.IsInRole("Admin"))
+{
+                                    <li class="nav-item">
+                                        <a class="nav-link text-dark" asp-area="" asp-controller="UserBooks" asp-action="Index">
+                                            <img src="~/images/cart-icon.png" alt="Cart" style="width: 50px; height: 50px;" />
+                                        </a>
+                                    </li>
+}
+
+                                </ul>
+                                    <partial name="_LoginPartial" />
+</div>
+                        </div>
+                    </nav>
+                </header>
+                <div class="container">
+                    <main role="main" class="pb-3">
+                        @RenderBody()
+                    </main>
                 </div>
-            </div>
-        </nav>
-    </header>
-    <div class="container">
-        <main role="main" class="pb-3">
-            @RenderBody()
-        </main>
-    </div>
 
-    <footer class="border-top footer text-muted">
-        <div class="container">
-            &copy; 2024 - MVCBook - <a asp-area="" asp-controller="Home" asp-action="Privacy">Privacy</a>
-        </div>
-    </footer>
-    <script src="~/lib/jquery/dist/jquery.min.js"></script>
-    <script src="~/lib/bootstrap/dist/js/bootstrap.bundle.min.js"></script>
-    <script src="~/js/site.js" asp-append-version="true"></script>
-    @await RenderSectionAsync("Scripts", required: false)
-</body>
-</html>
+                <footer class="border-top footer text-muted">
+                    <div class="container">
+                        &copy; 2024 - MVCBook - <a asp-area="" asp-controller="Home" asp-action="Privacy">Privacy</a>
+                    </div>
+                </footer>
+                <script src="~/lib/jquery/dist/jquery.min.js"></script>
+                <script src="~/lib/bootstrap/dist/js/bootstrap.bundle.min.js"></script>
+                <script src="~/js/site.js" asp-append-version="true"></script>
+                @await RenderSectionAsync("Scripts", required: false)
+            </body>
+        </html>

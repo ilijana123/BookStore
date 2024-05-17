@@ -4,62 +4,119 @@
     ViewData["Title"] = "Details";
 }
 
-<h1>Details</h1>
+<style>
+    .container {
+        margin: 0 auto; /* Center the container */
+        padding: 20px;
+        border: 1px solid #ccc;
+        border-radius: 5px;
+        max-width: 800px; /* Limit the maximum width */
+    }
 
-<div>
-    <h4>Author</h4>
-    <hr />
-    <dl class="row">
-        <dt class="col-sm-2">
-            @Html.DisplayNameFor(model => model.FirstName)
-        </dt>
-        <dd class="col-sm-10">
-            @Html.DisplayFor(model => model.FirstName)
-        </dd>
-        <dt class="col-sm-2">
-            @Html.DisplayNameFor(model => model.LastName)
-        </dt>
-        <dd class="col-sm-10">
-            @Html.DisplayFor(model => model.LastName)
-        </dd>
-        <dt class="col-sm-2">
-            @Html.DisplayNameFor(model => model.BirthDate)
-        </dt>
-        <dd class="col-sm-10">
-            @Html.DisplayFor(model => model.BirthDate)
-        </dd>
-        <dt class="col-sm-2">
-            @Html.DisplayNameFor(model => model.Nationality)
-        </dt>
-        <dd class="col-sm-10">
-            @Html.DisplayFor(model => model.Nationality)
-        </dd>
-        <dt class="col-sm-2">
-            @Html.DisplayNameFor(model => model.Gender)
-        </dt>
-        <dd class="col-sm-10">
-            @Html.DisplayFor(model => model.Gender)
-        </dd>
-        <dt class="col-sm-2">
-            @Html.DisplayNameFor(model => model.Books)
-        </dt>
-        <dd class="col-sm-10">
-            @if (Model.Books != null && Model.Books.Any())
-    {
-        foreach (var book in Model.Books)
-        {
-            <a asp-controller="Books" asp-action="Details" asp-route-id="@book.Id">  @book.Title </a>
-            <br />
+    h1 {
+        font-size: 28px; /* Increase the font size */
+        text-align: center; /* Center the heading */
+        margin-bottom: 20px;
+    }
+
+    .row {
+        margin-bottom: 10px;
+    }
+
+    .col-sm-2 {
+        font-weight: bold;
+    }
+
+    .col-sm-10 span {
+        font-size: 22px; /* Increase the font size */
+    }
+
+    .action-links {
+        margin-top: 20px;
+        text-align: center; /* Center the action links */
+    }
+
+        .action-links a {
+            margin-right: 10px;
         }
-    }
-    else
-    {
-            <span>No books available</span>
-    }
-        </dd>
-    </dl>
-</div>
-<div>
-    <a asp-action="Edit" asp-route-id="@Model?.Id">Edit</a> |
-    <a asp-action="Index">Back to List</a>
+
+        .action-links button {
+            margin-right: 10px;
+        }
+</style>
+
+<div class="container">
+    <h1>Author Details</h1>
+
+    <div>
+        <h4>Author</h4>
+        <hr />
+        <dl class="row">
+            <dt class="col-sm-2">
+                @Html.DisplayNameFor(model => model.FirstName)
+            </dt>
+            <dd class="col-sm-10">
+                <span>@Html.DisplayFor(model => model.FirstName)</span>
+            </dd>
+            <dt class="col-sm-2">
+                @Html.DisplayNameFor(model => model.LastName)
+            </dt>
+            <dd class="col-sm-10">
+                <span>@Html.DisplayFor(model => model.LastName)</span>
+            </dd>
+            <dt class="col-sm-2">
+                @Html.DisplayNameFor(model => model.BirthDate)
+            </dt>
+            <dd class="col-sm-10">
+                <span>@Html.DisplayFor(model => model.BirthDate)</span>
+            </dd>
+            <dt class="col-sm-2">
+                @Html.DisplayNameFor(model => model.Nationality)
+            </dt>
+            <dd class="col-sm-10">
+                <span>@Html.DisplayFor(model => model.Nationality)</span>
+            </dd>
+            <dt class="col-sm-2">
+                @Html.DisplayNameFor(model => model.Gender)
+            </dt>
+            <dd class="col-sm-10">
+                <span>@Html.DisplayFor(model => model.Gender)</span>
+            </dd>
+            <dt class="col-sm-2">
+                @Html.DisplayNameFor(model => model.Books)
+            </dt>
+            <dd class="col-sm-10">
+                @if (Model.Books != null && Model.Books.Any())
+                {
+                    foreach (var book in Model.Books)
+                    {
+                        <a asp-controller="Books" asp-action="Details" asp-route-id="@book.Id">  @book.Title </a>
+                        <br />
+                    }
+                }
+                else
+                {
+                    <span>No books available</span>
+                }
+            </dd>
+        </dl>
+    </div>
+
+    <div class="action-links">
+        @if (User.Identity.IsAuthenticated && User.IsInRole("Admin"))
+        {
+            <a class="btn btn-sm btn-primary" asp-action="Edit" asp-route-id="@Model?.Id">Edit</a>
+        }
+        @if (User.Identity.IsAuthenticated && User.IsInRole("Admin"))
+        {
+            <a class="btn btn-sm btn-danger" asp-action="Delete" asp-route-id="@Model?.Id">Delete</a>
+          
+ 
+        }
+        <a class="btn btn-sm btn-info" asp-controller="Books" asp-action="Index">Back to List</a>
+    </div>
+    <td>
+
+        
+    </td>
 </div>

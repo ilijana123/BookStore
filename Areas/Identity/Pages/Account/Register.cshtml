@@ -1,0 +1,98 @@
+﻿@page
+@model RegisterModel
+@{
+    ViewData["Title"] = "Register";
+}
+
+<style>
+    body {
+        background-color: #f8f9fa;
+        font-family: Arial, sans-serif;
+    }
+
+    .register-container {
+        background-color: #fff;
+        border-radius: 10px;
+        box-shadow: 0 0 20px rgba(0, 0, 0, 0.1);
+        padding: 40px;
+        max-width: 400px;
+        margin: auto;
+        margin-top: 100px;
+    }
+
+        .register-container h2 {
+            margin-bottom: 30px;
+            text-align: center;
+            color: #333;
+        }
+
+    .form-control {
+        border-radius: 20px;
+        padding: 15px;
+        margin-bottom: 20px;
+        box-shadow: none;
+    }
+
+    .form-floating {
+        position: relative;
+    }
+
+        .form-floating label {
+            position: absolute;
+            top: 50%;
+            transform: translateY(-50%);
+            color: #555;
+            pointer-events: none;
+            transition: top 0.3s ease, transform 0.3s ease, color 0.3s ease;
+        }
+
+        .form-floating input:focus ~ label,
+        .form-floating input:not(:placeholder-shown) ~ label {
+            top: 0;
+            transform: translateY(0);
+            font-size: 12px;
+            color: #777;
+        }
+
+    .btn-register {
+        background-color: #007bff;
+        color: #fff;
+        border-radius: 20px;
+        padding: 15px;
+        width: 100%;
+        border: none;
+        font-size: 16px;
+        transition: background-color 0.3s;
+    }
+
+        .btn-register:hover {
+            background-color: #0056b3;
+        }
+</style>
+
+<div class="register-container">
+    <h2>Register</h2>
+    <form id="registerForm" asp-route-returnUrl="@Model.ReturnUrl" method="post">
+        <div asp-validation-summary="ModelOnly" class="text-danger" role="alert"></div>
+        <div class="form-floating">
+            <input asp-for="Input.Email" class="form-control" autocomplete="username" aria-required="true" placeholder="name@example.com" />
+            <label>Email</label>
+            <span asp-validation-for="Input.Email" class="text-danger"></span>
+        </div>
+        <div class="form-floating">
+            <input asp-for="Input.Password" class="form-control" autocomplete="new-password" aria-required="true" placeholder="password" />
+            <label>Password</label>
+            <span asp-validation-for="Input.Password" class="text-danger"></span>
+        </div>
+        <div class="form-floating">
+            <input asp-for="Input.ConfirmPassword" class="form-control" autocomplete="new-password" aria-required="true" placeholder="password" />
+            <label>Confirm Password</label>
+            <span asp-validation-for="Input.ConfirmPassword" class="text-danger"></span>
+        </div>
+        <button id="registerSubmit" type="submit" class="btn btn-register">Register</button>
+    </form>
+</div>
+
+@section Scripts {
+    <partial name="_ValidationScriptsPartial" />
+}

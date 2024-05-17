@@ -1,4 +1,7 @@
-﻿@model MVCBookk.Models.UserBooks
+﻿@using Microsoft.AspNetCore.Identity
+@using MVCBookk.Areas.Identity.Data
+@inject UserManager<MVCBookkUser> UserManager
+@model MVCBookk.Models.UserBooks
 
 @{
     ViewData["Title"] = "Details";
@@ -10,21 +13,21 @@
     <h4>UserBooks</h4>
     <hr />
     <dl class="row">
-        <dt class = "col-sm-2">
-            @Html.DisplayNameFor(model => model.AppUser)
+        <dt class="col-sm-2">
+            AppUser Email
         </dt>
-        <dd class = "col-sm-10">
-            @Html.DisplayFor(model => model.AppUser)
+        <dd class="col-sm-10">
+            @UserManager.FindByIdAsync(Model.AppUser).Result.Email
         </dd>
-        <dt class = "col-sm-2">
-            @Html.DisplayNameFor(model => model.Book)
+        <dt class="col-sm-2">
+            Book Title
         </dt>
-        <dd class = "col-sm-10">
+        <dd class="col-sm-10">
             @Html.DisplayFor(model => model.Book.Title)
         </dd>
     </dl>
 </div>
 <div>
-    <a asp-action="Edit" asp-route-id="@Model?.Id">Edit</a> |
-    <a asp-action="Index">Back to List</a>
+    <a class="btn btn-danger btn-primary" asp-action="Edit" asp-route-id="@Model?.Id">Edit</a>
+    <a class="btn btn-danger btn-dark" asp-action="Index" asp-route-id="@Model?.Id">Back to List</a>
 </div>

@@ -10,17 +10,45 @@
 <hr />
 <div class="row">
     <div class="col-md-4">
-        <form asp-action="Create">
+        <form asp-action="Create" enctype="multipart/form-data">
             <div asp-validation-summary="ModelOnly" class="text-danger"></div>
             <div class="form-group">
                 <label asp-for="Book.Title" class="control-label"></label>
                 <input asp-for="Book.Title" class="form-control" />
                 <span asp-validation-for="Book.Title" class="text-danger"></span>
             </div>
+
             <div class="form-group">
-                <label asp-for="Book.FrontPage" class="control-label"></label>
-                <input asp-for="Book.FrontPage" class="form-control" />
-                <span asp-validation-for="Book.FrontPage" class="text-danger"></span>
+                <label asp-for="File" class="control-label"></label>
+                <input asp-for="File" type="file" class="form-control" />
+                <span asp-validation-for="File" class="text-danger"></span>
+            </div>
+
+            <!--
+    <div class="text-center">
+        <h1 class="display-4">Welcome</h1>
+        <p>Learn about <a href="https://learn.microsoft.com/aspnet/core">building Web apps with ASP.NET Core</a>.</p>
+
+        <img src="~@ViewData["ImageUrl"]" height="100" width="100" alt="" asp-append-version="true" />
+    </div>
+
+    <form method="post" enctype="multipart/form-data" asp-controller="Home" asp-action="Index">
+        <div class="mb-2">
+            <label for="File" class="form-label"> Select a file to upload </label>
+            <input id="File" name="File" type="file" class="form-control" />
+        </div>
+        <div class="mb-2 form-group">
+            <button class="btn btn-primary">Upload</button>
+        </div>
+    </form>
+    -->
+            <div class="form-group">
+                <label asp-for="Download" class="control-label"></label>
+                <div class="custom-file">
+                    <input asp-for="Download" class="custom-file-input" id="customFile">
+                    <label class="custom-file-label" for="customFile">Choose file</label>
+                </div>
+                <span asp-validation-for="Download" class="text-danger"></span>
             </div>
             <div class="form-group">
                 <label asp-for="Book.YearPublished" class="control-label"></label>
@@ -33,7 +61,7 @@
                     <option value="">Select</option>
                 </select>
             </div>
-    
+
             <div class="form-group">
                 <label asp-for="SelectedGenres" class="control-label">Genres</label>
                 <select asp-for="SelectedGenres" class="form-control" asp-items="Model.GenreList" multiple></select>
@@ -55,11 +83,12 @@
                 <input asp-for="Book.Publisher" class="form-control" />
                 <span asp-validation-for="Book.Publisher" class="text-danger"></span>
             </div>
+            <!--
             <div class="form-group">
                 <label asp-for="Book.DownloadUrl" class="control-label"></label>
                 <input asp-for="Book.DownloadUrl" class="form-control" />
                 <span asp-validation-for="Book.DownloadUrl" class="text-danger"></span>
-            </div>
+            </div>-->
             <div class="form-group">
                 <input type="submit" value="Create" class="btn btn-primary" />
             </div>

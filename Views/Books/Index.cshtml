@@ -4,84 +4,96 @@
     ViewData["Title"] = "Index";
 }
 
-<h1>Index</h1>
+<h1><em>Book's List</em></h1>
 
-<p>
-    <a asp-action="Create">Create New</a>
-</p>
-<form asp-controller="Books" asp-action="Index" method="get">
-    <p>
-        <select asp-for="BookGenre" asp-items="Model.Genres">
-            <option value="">All</option>
-        </select>
-        <select asp-for="BookAuthor" asp-items="Model.Authors.Select(a => new SelectListItem { Value = a.FullName, Text = a.FullName })">
-            <option value="">All</option>
-        </select>
-        Title: <input type="text" asp-for="SearchString" />
-        <input type="submit" value="Filter" />
-    </p>
-</form>
-    <table class="table">
-        <thead>
-            <tr>
-                <th>
-                    @Html.DisplayNameFor(model => model.Books[0].FrontPage)
-                </th>
-                <th>
-                    @Html.DisplayNameFor(model => model.Books[0].Title)
-                </th>
-                <th>
-                    @Html.DisplayNameFor(model => model.Books[0].Author)
-                </th>
-                <th>
-                    @Html.DisplayNameFor(model => model.Books[0].YearPublished)
-                </th>
-                <th>
-                    @Html.DisplayNameFor(model => model.Books[0].Genres)
-                </th>
-                <th>
-                    @Html.DisplayNameFor(model => model.Books[0].AverageRating)
-                </th>
-                <th></th>
-            </tr>
-        </thead>
-        <tbody>
-            @foreach (var item in Model.Books) {
-            <tr>
-                <td>
-                    <div class="col-md-6">
-                        <img src="@item.FrontPage" width="20%" alt="@item.Title">
-                    </div>
-                </td>
-                <td>
-                    @Html.DisplayFor(modelItem => item.Title)
-                </td>
-                <td>
-
-                    @if (item.AuthorId != null)
-            {
-                    <a asp-controller="Authors" asp-action="Details" asp-route-id="@item.AuthorId"> @Html.DisplayFor(modelItem => item.Author.FullName)</a>
-            }
-                </td>
-                <td>
-
-                    @Html.DisplayFor(modelItem => item.YearPublished)
-                </td>
-                <td>
-                    @foreach (var genre in item.Genres)
-                {
-                    <a asp-controller="Genres" asp-action="Details" asp-route-id="@genre.GenreId">  @genre.Genre.GenreName </a>  <br />
-                }
-                </td>
-                <td>
-                    @Html.DisplayFor(modelItem => item.AverageRating)
-                </td>
-                <td>
-                    <a asp-action="Edit" asp-route-id="@item.Id">Edit</a> |
-                    <a asp-action="Details" asp-route-id="@item.Id">Details</a> |
-                    <a asp-action="Delete" asp-route-id="@item.Id">Delete</a>
-                </td>
-            </tr>
+@if (User.Identity.IsAuthenticated && User.IsInRole("Admin"))
+{
+    <div class="mb-3">
+        <a class="btn btn-success" asp-action="Create">Create New</a>
+    </div>
 }
-        </tbody>
-    </table>
+
+<form asp-controller="Books" asp-action="Index" method="get">
+    <div class="row">
+        <div class="col-md-3 mb-3">
+            <select class="form-control" asp-for="BookGenre" asp-items="Model.Genres">
+                <option value="">All Genres</option>
+            </select>
+        </div>
+        <div class="col-md-3 mb-3">
+            <select class="form-control" asp-for="BookAuthor" asp-items="Model.Authors.Select(a => new SelectListItem { Value = a.FullName, Text = a.FullName })">
+                <option value="">All Authors</option>
+            </select>
+        </div>
+        <div class="col-md-4 mb-3">
+            <div class="input-group">
+                <input type="text" class="form-control" placeholder="Search by Title" aria-label="Search by Title" aria-describedby="button-addon2" asp-for="SearchString">
+                <button class="btn btn-outline-secondary" type="submit" id="button-addon2">Search</button>
+            </div>
+        </div>
+    </div>
+</form>
+
+<div class="row row-cols-1 row-cols-md-3 g-4">
+    @foreach (var item in Model.Books)
+    {
+      
+        <div class="col">
+            <div class="card h-100">
+                <img src="@item.FrontPage" class="card-img-top" alt="@item.Title" style="height: 300px; object-fit: cover;">
+                <div class="card-body">
+                    <h5 class="card-title">Title: @item.Title</h5>
+                    <p class="card-text" style="font-style: italic; font-weight: bold; color: black;">
+                        <a asp-controller="Authors" asp-action="Details" asp-route-id="@item.AuthorId"> @Html.DisplayFor(modelItem => item.Author.FullName)</a>
+                    </p>
+
+                    <p class="card-text" style="font-style: italic; font-weight: bold; color: black;">
+                        Year Published: @item.YearPublished
+                    </p>
+                    <p class="card-text" style="font-style: italic; font-weight: bold; color: black;">
+                        Average Rating: @item.AverageRating
+                    </p>
+                    <p class="card-text" style="font-style: italic; font-weight: bold; color: black;">
+                        Genres:
+                        @foreach (var genre in item.Genres)
+                        {
+                            <a asp-controller="Genres" asp-action="Details" asp-route-id="@genre.GenreId">@genre.Genre.GenreName</a> <br />
+                        }
+                    </p>
+                </div>
+                <div class="card-footer">
+                    <div class="btn-group" role="group" aria-label="Book actions">
+                        @if (User.Identity.IsAuthenticated && User.IsInRole("Admin"))
+                        {
+                        <a class="btn btn-primary" asp-action="Edit" asp-route-id="@item.Id">Edit</a>
+                        <a class="btn btn-danger" asp-action="Delete" asp-route-id="@item.Id">Delete</a>
+                        }
+                        <a class="btn btn-success" asp-action="Details" asp-route-id="@item.Id">Details</a> 
+                        <div class="card-footer">
+                            <div class="btn-group" role="group" aria-label="Book actions">
+                                @if (User.Identity.IsAuthenticated && !User.IsInRole("Admin"))
+{
+                                <form asp-controller="UserBooks" asp-action="Create" method="post">
+                                    <input type="hidden" name="bookId" value="@item.Id" />
+                                    
+                                        <button type="submit" class="btn btn-success">
+                                            <img src="~/images/bag.png" alt="Buy" style="width: 20px; height: 20px;" />
+                                        </button>
+                                   
+                                </form>
+                                }
+
+else if(!User.IsInRole("Admin"))
+{                       
+                                <a class="btn btn-success" href="/Identity/Account/Login">Login to Buy</a>
+}
+                            </div>
+                        </div>
+
+                    </div>
+                   
+                </div>
+            </div>
+        </div>
+    }
+</div>

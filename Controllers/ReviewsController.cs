@@ -2,12 +2,14 @@
 using System.Collections.Generic;
 using System.Linq;
 using System.Threading.Tasks;
+using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Mvc;
 using Microsoft.AspNetCore.Mvc.Rendering;
 using Microsoft.EntityFrameworkCore;
 using MVCBookk.Data;
 using MVCBookk.Models;
-
+using MVCBookk.ViewModels;
+using System.Security.Claims;
 namespace MVCBookk.Controllers
 {
     public class ReviewsController : Controller
@@ -20,6 +22,7 @@ namespace MVCBookk.Controllers
         }
 
         // GET: Reviews
+        //[Authorize(Roles = "Admin")]
         public async Task<IActionResult> Index()
         {
             var mVCBookkContext = _context.Review.Include(r => r.Book);
@@ -44,32 +47,51 @@ namespace MVCBookk.Controllers
 
             return View(review);
         }
-
         // GET: Reviews/Create
-        public IActionResult Create()
+        //[Authorize(Roles = "Admin")]
+        public IActionResult Create(int bookId)
         {
-            ViewData["BookId"] = new SelectList(_context.Book, "Id", "Title");
+            // Get the currently logged-in user's ID
+            string userId = User.FindFirstValue(ClaimTypes.NameIdentifier);
+
+            // Pass the user's ID to the view
+            ViewBag.UserId = userId;
+
+            // Get the book associated with the provided bookId
+            var book = _context.Book.Find(bookId);
+            if (book == null)
+            {
+                return NotFound(); // Or handle the case where the book is not found
+            }
+
+            // Pass the book ID and title to the view
+            ViewData["BookId"] = new SelectList(new List<Book> { book }, "Id", "Title");
+
             return View();
         }
 
         // POST: Reviews/Create
         // To protect from overposting attacks, enable the specific properties you want to bind to.
         // For more details, see http://go.microsoft.com/fwlink/?LinkId=317598.
+
         [HttpPost]
         [ValidateAntiForgeryToken]
-        public async Task<IActionResult> Create([Bind("Id,BookId,AppUser,Comment,Rating")] Review review)
+        //[Authorize(Roles = "Admin")]
+        public async Task<IActionResult> Create([Bind("BookId,AppUser,Comment,Rating")] Review review)
         {
             if (ModelState.IsValid)
             {
                 _context.Add(review);
                 await _context.SaveChangesAsync();
-                return RedirectToAction(nameof(Index));
+
+                // Redirect to the details page of the corresponding book
+                return RedirectToAction("Details", "Books", new { id = review.BookId });
             }
             ViewData["BookId"] = new SelectList(_context.Book, "Id", "Title", review.BookId);
             return View(review);
         }
-
         // GET: Reviews/Edit/5
+        // [Authorize(Roles = "User")]
         public async Task<IActionResult> Edit(int? id)
         {
             if (id == null)
@@ -91,6 +113,7 @@ namespace MVCBookk.Controllers
         // For more details, see http://go.microsoft.com/fwlink/?LinkId=317598.
         [HttpPost]
         [ValidateAntiForgeryToken]
+        //[Authorize(Roles = "User")]
         public async Task<IActionResult> Edit(int id, [Bind("Id,BookId,AppUser,Comment,Rating")] Review review)
         {
             if (id != review.Id)
@@ -116,13 +139,16 @@ namespace MVCBookk.Controllers
                         throw;
                     }
                 }
-                return RedirectToAction(nameof(Index));
+
+                // Redirect to the details page of the corresponding book
+                return RedirectToAction("Details", "Books", new { id = review.BookId });
             }
             ViewData["BookId"] = new SelectList(_context.Book, "Id", "Title", review.BookId);
             return View(review);
         }
 
         // GET: Reviews/Delete/5
+        //[Authorize(Roles = "User")]
         public async Task<IActionResult> Delete(int? id)
         {
             if (id == null)
@@ -144,18 +170,19 @@ namespace MVCBookk.Controllers
         // POST: Reviews/Delete/5
         [HttpPost, ActionName("Delete")]
         [ValidateAntiForgeryToken]
+        //[Authorize(Roles = "User")]
         public async Task<IActionResult> DeleteConfirmed(int id)
         {
             var review = await _context.Review.FindAsync(id);
             if (review != null)
             {
                 _context.Review.Remove(review);
+                await _context.SaveChangesAsync();
             }
 
-            await _context.SaveChangesAsync();
-            return RedirectToAction(nameof(Index));
+            // Redirect to the details page of the corresponding book
+            return RedirectToAction("Details", "Books", new { id = review.BookId });
         }
-
         private bool ReviewExists(int id)
         {
             return _context.Review.Any(e => e.Id == id);

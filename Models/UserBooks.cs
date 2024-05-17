@@ -16,4 +16,5 @@ namespace MVCBookk.Models
         public Book? Book { get; set; }
 
     }
+
 }

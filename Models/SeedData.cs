@@ -1,21 +1,44 @@
-﻿using Microsoft.EntityFrameworkCore;
+﻿using Microsoft.AspNetCore.Identity;
+using Microsoft.EntityFrameworkCore;
 using MVCBookk.Data;
 using MVCBookk.Models;
 using System;
 using System.Linq;
 using System.Runtime.Intrinsics.X86;
-
-namespace MVCBook.Models
+using Microsoft.AspNetCore.Identity.EntityFrameworkCore;
+using MVCBookk.Areas.Identity.Data;
+namespace MVCBookk.Models
 {
     public class SeedData
     {
+        public static async Task CreateUserRoles(IServiceProvider serviceProvider)
+        {
+            var RoleManager = serviceProvider.GetRequiredService<RoleManager<IdentityRole>>();
+            var UserManager = serviceProvider.GetRequiredService<UserManager<MVCBookkUser>>();
+            IdentityResult roleResult;
+            //Add Admin Role
+            var roleCheck = await RoleManager.RoleExistsAsync("Admin");
+            if (!roleCheck) { roleResult = await RoleManager.CreateAsync(new IdentityRole("Admin")); }
+            MVCBookkUser user = await UserManager.FindByEmailAsync("admin@mvcbook.com");
+            if (user == null)
+            {
+                var User = new MVCBookkUser();
+                User.Email = "admin@mvcbook.com";
+                User.UserName = "admin@mvcbook.com";
+                string userPWD = "Admin123";
+                IdentityResult chkUser = await UserManager.CreateAsync(User, userPWD);
+                //Add default User to Role Admin
+                if (chkUser.Succeeded) { var result1 = await UserManager.AddToRoleAsync(User, "Admin"); }
+            }
+        }
+
         public static void Initialize(IServiceProvider serviceProvider)
         {
             using (var context = new MVCBookkContext(
                 serviceProvider.GetRequiredService<
                     DbContextOptions<MVCBookkContext>>()))
             {
-                
+                CreateUserRoles(serviceProvider).Wait();
                 if (context.Book.Any() || context.Author.Any() || context.Genre.Any() || context.Review.Any() || context.UserBooks.Any())
                 {
                     return;   // DB has been seeded

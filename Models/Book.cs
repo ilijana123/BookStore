@@ -34,8 +34,9 @@ namespace MVCBookk.Models
             {
                 if (Reviews != null && Reviews.Any() && Reviews.All(r => r.Rating != null))
                 {
-                    int totalRating = (int)Reviews.Sum(r => r.Rating);
-                    return (double)totalRating / Reviews.Count;
+                    double totalRating = Reviews.Sum(r => r.Rating.Value);
+                    double averageRating = totalRating / Reviews.Count;
+                    return Math.Round(averageRating, 1);
                 }
 
                 return null;

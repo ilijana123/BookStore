@@ -1,66 +1,102 @@
-﻿@model MVCBookk.Models.Book
+﻿@model MVCBookk.ViewModels.BookGenresEditViewModel
 
 @{
     ViewData["Title"] = "Delete";
 }
 
-<h1>Delete</h1>
+<style>
+    /* Center the container */
+    .container {
+        display: flex;
+        justify-content: center;
+        align-items: center;
+        height: 100vh;
+        margin-top: 50px; /* Adjust margin from the top */
+    }
 
-<h3>Are you sure you want to delete this?</h3>
-<div>
-    <h4>Book</h4>
-    <hr />
-    <dl class="row">
-        <dt class="col-sm-2">
-            @Html.DisplayNameFor(model => model.FrontPage)
-        </dt>
-        <dd class="col-sm-10">
-            @Html.DisplayFor(model => model.FrontPage)
-        </dd>
-        <dt class="col-sm-2">
-            @Html.DisplayNameFor(model => model.Title)
-        </dt>
-        <dd class="col-sm-10">
-            @Html.DisplayFor(model => model.Title)
-        </dd>
-        <dt class="col-sm-2">
-            @Html.DisplayNameFor(model => model.Author)
-        </dt>
-        <dd class="col-sm-10">
-            @if (Model.AuthorId != null)
-        {
-            <a asp-controller="Authors" asp-action="Details" asp-route-id="@Model.AuthorId">@Html.DisplayFor(model => model.Author.FullName)</a>
-        }
-        </dd>
-        <dt class="col-sm-2">
-            @Html.DisplayNameFor(model => model.YearPublished)
-        </dt>
-        <dd class="col-sm-10">
-            @Html.DisplayFor(model => model.YearPublished)
-        </dd>
-        <dt class="col-sm-2">
-            @Html.DisplayNameFor(model => model.Genres)
-        </dt>
-        <dd class="col-sm-10">
-            @foreach (var genre in Model.Genres)
-        {
-            <a asp-controller="Actors" asp-action="Details" asp-route-id="@genre.GenreId">  @genre.Genre.GenreName </a>  <br />
-        }
-        </dd>
+    /* Style the delete confirmation */
+    .delete-confirmation {
+        width: 80%; /* Set the width of the container */
+        padding: 20px;
+        background-color: #f9f9f9;
+        border-radius: 10px;
+        box-shadow: 0 0 20px rgba(0, 0, 0, 0.1);
+    }
 
-        <dt class="col-sm-2">
-            @Html.DisplayNameFor(model => model.AverageRating)
-        </dt>
-        <dd class="col-sm-10">
-            @Html.DisplayFor(model => model.AverageRating)
-        </dd>
-    </dl>
-    <form asp-action="Delete">
-        <input type="hidden" asp-for="Id" />
-        <input type="submit" value="Delete" class="btn btn-danger" /> |
-        <a asp-action="Index">Back to List</a>
-    </form>
-    <dt>
-        <a asp-action="Index">Cancel</a>
-    </dt>
+    /* Style the front-page image */
+    .front-page-image {
+        max-width: 100%;
+        max-height: 400px;
+        margin-bottom: 10px;
+    }
+
+    /* Style the delete form */
+    .delete-form {
+        margin-bottom: 10px;
+    }
+
+    /* Style the cancel button */
+    .cancel-btn {
+        margin-left: 5px;
+    }
+
+    /* Style the back-to-list button */
+    .back-to-list {
+        font-size: 20px;
+        margin-top: 10px;
+    }
+</style>
+
+<div class="container">
+    <div class="delete-confirmation">
+        <h1>Delete</h1>
+        <h3>Are you sure you want to delete this?</h3>
+        <div>
+            <h4>Book</h4>
+            <hr />
+            <dl class="row">
+                <dt class="col-sm-2">Front Page</dt>
+                <dd class="col-sm-10">
+                    <img src="@Html.DisplayFor(model => model.Book.FrontPage)" alt="Front Page Image" class="front-page-image" />
+                </dd>
+                <dt class="col-sm-2">Title</dt>
+                <dd class="col-sm-10">
+                    @Html.DisplayFor(model => model.Book.Title)
+                </dd>
+                <dt class="col-sm-2">Author</dt>
+                <dd class="col-sm-10">
+                    @if (Model.Book.AuthorId != null)
+                    {
+                        <a asp-controller="Authors" asp-action="Details" asp-route-id="@Model.Book.AuthorId">@Html.DisplayFor(model => model.Book.Author.FullName)</a>
+                    }
+                </dd>
+                <dt class="col-sm-2">Year Published</dt>
+                <dd class="col-sm-10">
+                    @Html.DisplayFor(model => model.Book.YearPublished)
+                </dd>
+                <dt class="col-sm-2">Genres</dt>
+                <dd class="col-sm-10">
+                    @foreach (var genre in Model.Book.Genres)
+                    {
+                        <a asp-controller="Genres" asp-action="Details" asp-route-id="@genre.GenreId">@genre.Genre.GenreName</a>
+
+                        <br />
+                    }
+                </dd>
+                <dt class="col-sm-2">Average Rating</dt>
+                <dd class="col-sm-10">
+                    @Html.DisplayFor(model => model.Book.AverageRating)
+                </dd>
+            </dl>
+            <div class="row">
+                <div class="col-md-6">
+                    <form asp-action="Delete" class="delete-form">
+                        <input type="hidden" asp-for="Book.Id" />
+                        <input type="submit" value="Delete" class="btn btn-danger" />
+                        <button type="button" onclick="location.href='@Url.Action("Index", "Books")'" class="btn btn-outline-secondary cancel-btn">Cancel</button>
+                    </form>
+                </div>
+            </div>
+        </div>
+    </div>
 </div>

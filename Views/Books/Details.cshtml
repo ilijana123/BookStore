@@ -1,101 +1,253 @@
-﻿@model MVCBookk.Models.Book
+﻿@using Microsoft.AspNetCore.Identity
+@using MVCBookk.Areas.Identity.Data
+
+@inject UserManager<MVCBookkUser> UserManager
+@model MVCBookk.Models.Book
 
 @{
     ViewData["Title"] = "Details";
 }
 
-<h1>Details</h1>
+<h1><em>Details</em></h1>
 
-<div>
-    <h4>Book</h4>
-    <hr />
-    <dl class="row">
-        <dt class="col-sm-2">
-            @Html.DisplayNameFor(model => model.FrontPage)
-        </dt>
-        <dt class="col-sm-10">
-            <div class="col-md-6">
-                <img src="@Html.DisplayFor(model=>model.FrontPage)" width="50%" alt="" @Html.DisplayFor(model=>model.Title) "             />
-            </div>
-        </dt>
-        <dt class="col-sm-2">
-            @Html.DisplayNameFor(model => model.Title)
-        </dt>
-        <dd class="col-sm-10">
-            @Html.DisplayFor(model => model.Title)
-        </dd>
-        <dt class="col-sm-2">
-            @Html.DisplayNameFor(model => model.Author)
-        </dt>
-        <dd class="col-sm-10">
-            @if (Model.AuthorId != null)
-            {
-            <a asp-controller="Authors" asp-action="Details" asp-route-id="@Model.AuthorId">@Html.DisplayFor(model => model.Author.FullName)</a>
-            }
-        </dd>
-        <dt class="col-sm-2">
-            @Html.DisplayNameFor(model => model.YearPublished)
-        </dt>
-        <dd class="col-sm-10">
-            @Html.DisplayFor(model => model.YearPublished)
-        </dd>
+<div class="row">
+    <div class="col-md-6">
+        <h4>Book</h4>
+        <dl class="row">
+            <dt class="col-sm-3">Front Page:</dt>
+            <dd class="col-sm-9">
+                <img src="@Html.DisplayFor(model => model.FrontPage)" alt="@Html.DisplayFor(model => model.Title)" style="max-width: 50%; height: auto;">
+            </dd>
 
-        <dt class="col-sm-2">
-            @Html.DisplayNameFor(model => model.AverageRating)
-        </dt>
-        <dd class="col-sm-10">
-            @if (ViewBag.AverageRating != null)
-    {
-            <span>@ViewBag.AverageRating</span>
-    }
-    else
-    {
-            <span>No reviews</span>
-    }
-        </dd>
-        <dt class="col-sm-2">
-            @Html.DisplayNameFor(model => model.Genres)
-        </dt>
-        <dd class="col-sm-10">
-            @if (Model.Genres != null && Model.Genres.Any())
-    {
-        foreach (var bookGenre in Model.Genres)
+            <dt class="col-sm-3">@Html.DisplayNameFor(model => model.Title)</dt>
+            <dd class="col-sm-9">@Html.DisplayFor(model => model.Title)</dd>
+
+            <dt class="col-sm-3">@Html.DisplayNameFor(model => model.Author)</dt>
+            <dd class="col-sm-9">
+                @if (Model.AuthorId != null)
+                {
+                    <a asp-controller="Authors" asp-action="Details" asp-route-id="@Model.AuthorId">@Html.DisplayFor(model => model.Author.FullName)</a>
+                }
+            </dd>
+
+            <dt class="col-sm-3">@Html.DisplayNameFor(model => model.YearPublished)</dt>
+            <dd class="col-sm-9">@Html.DisplayFor(model => model.YearPublished)</dd>
+
+            <dt class="col-sm-3">@Html.DisplayNameFor(model => model.AverageRating)</dt>
+            <dd class="col-sm-9">
+                @if (ViewBag.AverageRating != null)
+                {
+                    <span>@ViewBag.AverageRating</span>
+                }
+                else
+                {
+                    <span>No reviews</span>
+                }
+            </dd>
+
+            <dt class="col-sm-3">@Html.DisplayNameFor(model => model.Genres)</dt>
+            <dd class="col-sm-9">
+                @if (Model.Genres != null && Model.Genres.Any())
+                {
+                    foreach (var bookGenre in Model.Genres)
+                    {
+                        if (bookGenre != null && bookGenre.Genre != null)
+                        {
+                            <a asp-controller="Genres" asp-action="Details" asp-route-id="@bookGenre.Genre.Id">@bookGenre.Genre.GenreName</a>
+                            <br />
+                        }
+                    }
+                }
+            </dd>
+
+            <dt class="col-sm-3">@Html.DisplayNameFor(model => model.Description)</dt>
+            <dd class="col-sm-9">@Html.DisplayFor(model => model.Description)</dd>
+
+            <dt class="col-sm-3">@Html.DisplayNameFor(model => model.Publisher)</dt>
+            <dd class="col-sm-9">@Html.DisplayFor(model => model.Publisher)</dd>
+
+            <dt class="col-sm-3">@Html.DisplayNameFor(model => model.NumPages)</dt>
+            <dd class="col-sm-9">@Html.DisplayFor(model => model.NumPages)</dd>
+
+            <!--<dt class="col-sm-3">@Html.DisplayNameFor(model => model.DownloadUrl)</dt>
+            <dd class="col-sm-9"><a href="@Html.DisplayFor(model => model.DownloadUrl)">Download</a></dd>-->
+            <dt class="col-sm-3">@Html.DisplayNameFor(model => model.DownloadUrl)</dt>
+            <dd class="col-sm-9">
+                @if (User.Identity.IsAuthenticated && Model.UserBooks.Any(ub => ub.AppUser == UserManager.GetUserId(User)))
+                {
+                    <a href="@Html.DisplayFor(model => model.DownloadUrl)">Download</a>
+                }
+                else
+                {
+                    <span>Only available after purchase</span>
+                }
+            </dd>
+        </dl>
+    </div>
+</div>
+
+<div class="row">
+    <div class="col-md-6">
+        @if (User.Identity.IsAuthenticated && User.IsInRole("Admin"))
         {
-            if (bookGenre != null && bookGenre.Genre != null)
+            <a class="btn btn-primary" asp-action="Edit" asp-route-id="@Model?.Id">Edit</a>
+        }
+        @if (User.Identity.IsAuthenticated && User.IsInRole("Admin"))
+        {
+            <a class="btn btn-danger" asp-action="Delete" asp-route-id="@Model?.Id">Delete</a>
+        }
+        <a class="btn btn-secondary" asp-action="Index">Back to List</a>
+    </div>
+</div>
+
+<hr />
+
+<div class="row">
+    <div class="col-md-6">
+        @if (User.Identity.IsAuthenticated && !User.IsInRole("Admin"))
+        {
+            <form asp-controller="UserBooks" asp-action="Create" method="post">
+                <input type="hidden" name="bookId" value="@Model.Id" />
+                <button type="submit" class="btn btn-success">
+                    <img src="~/images/bag.png" alt="Buy" style="width: 20px; height: 20px;" />
+                </button>
+            </form>
+        }
+        else if (!User.IsInRole("Admin"))
+        {
+            <a class="btn btn-success" href="/Identity/Account/Login">Login to Buy</a>
+        }
+    </div>
+</div>
+
+<div class="row">
+    <div class="col-md-6">
+        <h4>Reviews</h4>
+        @if (Model != null && Model.Reviews != null && Model.Reviews.Any())
+        {
+            @foreach (var review in Model.Reviews)
             {
-            <a asp-controller="Genres" asp-action="Details" asp-route-id="@bookGenre.Genre.Id">@bookGenre.Genre.GenreName</a><br />
+                <div class="card mb-3">
+                    <div class="card-body">
+                        <h5 class="card-title">@await UserManager.FindByIdAsync(review.AppUser)</h5>
+                        <p class="card-text">@review.Comment</p>
+                        @if (review.Rating != null)
+                        {
+                            <p class="card-text">Rating: @review.Rating</p>
+                        }
+                        @if (User.Identity.IsAuthenticated && UserManager.GetUserId(User) == review.AppUser)
+                        {
+                            <a href="@Url.Action("Edit", "Reviews", new { id = review.Id })" class="btn btn-primary">Edit</a>
+                            <form asp-controller="Reviews" asp-action="Delete" method="post" class="delete-form d-inline">
+                                <input type="hidden" name="id" value="@review.Id" />
+                                <button type="submit" class="btn btn-danger">Delete</button>
+                            </form>
+                        }
+                    </div>
+                </div>
             }
         }
+        else
+        {
+            <p>No reviews</p>
+        }
+        @if (User.Identity.IsAuthenticated && !User.IsInRole("Admin"))
+        {
+            <form asp-controller="Reviews" asp-action="Create" method="get">
+                <input type="hidden" name="bookId" value="@Model.Id" />
+                <button type="submit" class="btn btn-sm btn-primary">Create Review</button>
+            </form>
+        }
+    </div>
+</div>
+
+<style>
+    /* Your existing CSS styles */
+    ul.list-unstyled {
+        list-style-type: none;
+        padding: 0;
     }
-        </dd>
-        </dd>
-        <dt class="col-sm-2">
-            @Html.DisplayNameFor(model => model.Description)
-        </dt>
-        <dd class="col-sm-10">
-            @Html.DisplayFor(model => model.Description)
-        </dd>
-        <dt class="col-sm-2">
-            @Html.DisplayNameFor(model => model.Publisher)
-        </dt>
-        <dd class="col-sm-10">
-            @Html.DisplayFor(model => model.Publisher)
-        </dd>
-        <dt class="col-sm-2">
-            @Html.DisplayNameFor(model => model.NumPages)
-        </dt>
-        <dd class="col-sm-10">
-            @Html.DisplayFor(model => model.NumPages)
-        </dd>
-        <dt class="col-sm-2">
-            @Html.DisplayNameFor(model => model.DownloadUrl)
-        </dt>
-        <dd class="col-sm-10">
-            <a href="@Html.DisplayFor(model => model.DownloadUrl)">Download</a>
-        </dd>
-    </dl>
-</div>
-<div>
-    <a asp-action="Edit" asp-route-id="@Model?.Id">Edit</a> |
-    <a asp-action="Index">Back to List</a>
-</div>
+
+        ul.list-unstyled li {
+            margin-bottom: 10px;
+        }
+
+            ul.list-unstyled li strong {
+                color: #333;
+            }
+
+            ul.list-unstyled li span {
+                color: #888;
+                font-style: italic;
+            }
+
+            ul.list-unstyled li a {
+                color: #007bff;
+                text-decoration: none;
+                margin-right: 10px;
+            }
+
+            ul.list-unstyled li button {
+                background-color: #dc3545;
+                color: #fff;
+                border: none;
+                padding: 5px 10px;
+                cursor: pointer;
+            }
+
+            ul.list-unstyled li form.delete-form {
+                display: inline;
+                margin-left: 10px;
+            }
+
+    /* Basic link styling */
+    a {
+        color: black; /* Blue color */
+        text-decoration: none; /* Remove underlines */
+        font-weight: normal;
+        transition: color 0.3s ease, background-color 0.3s ease;
+    }
+
+        /* Hover effect */
+        a:hover {
+            color: #004999; /* Darker blue on hover */
+            text-decoration: underline; /* Underline on hover */
+        }
+
+        /* Focus effect */
+        a:focus {
+            outline: 2px solid #ffcc00; /* Yellow outline on focus */
+            outline-offset: 2px; /* Space between outline and element */
+        }
+
+        /* Visited link styling */
+        a:visited {
+            color: black; /* Purple color for visited links */
+        }
+
+        /* Active link styling */
+        a:active {
+            color: #ff0000; /* Red color when active (clicked) */
+        }
+
+        /* Fancy link styling */
+        a.fancy {
+            color: #1a73e8; /* Google blue */
+            font-weight: bold;
+            text-decoration: none;
+            border-bottom: 2px solid #1a73e8; /* Add border instead of underline */
+            transition: all 0.3s ease;
+        }
+
+            /* Fancy link hover effect */
+            a.fancy:hover {
+                color: #0c47a1; /* Darker shade of blue */
+                border-bottom-color: #0c47a1; /* Darker border on hover */
+            }
+
+            /* Fancy link focus effect */
+            a.fancy:focus {
+                outline: 2px dashed #1a73e8; /* Dashed outline for focus */
+                outline-offset: 4px; /* Space between outline and element */
+            }
+</style>

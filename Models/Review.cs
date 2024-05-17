@@ -17,6 +17,7 @@ namespace MVCBookk.Models
         [Required]
         [StringLength(500)]
         public string Comment { get; set; }
+        [Range(1, 10)]
         public int? Rating { get; set; }
         public Book? Book { get; set; }
     }

@@ -1,35 +1,41 @@
 ﻿@model IEnumerable<MVCBookk.Models.Genre>
 
-@{
+    @{
     ViewData["Title"] = "Index";
+    }
+
+    <h1 class="mb-4 display-4">Genres List</h1>
+
+    @if (User.Identity.IsAuthenticated && User.IsInRole("Admin"))
+{
+    <p>
+        <a class="btn btn-primary btn-lg" asp-action="Create">Create New Genre</a>
+    </p>
 }
 
-<h1>Index</h1>
-
-<p>
-    <a asp-action="Create">Create New</a>
-</p>
-<table class="table">
-    <thead>
-        <tr>
-            <th>
-                @Html.DisplayNameFor(model => model.GenreName)
-            </th>
-            <th></th>
-        </tr>
-    </thead>
-    <tbody>
-@foreach (var item in Model) {
-        <tr>
-            <td>
-                @Html.DisplayFor(modelItem => item.GenreName)
-            </td>
-            <td>
-                <a asp-action="Edit" asp-route-id="@item.Id">Edit</a> |
-                <a asp-action="Details" asp-route-id="@item.Id">Details</a> |
-                <a asp-action="Delete" asp-route-id="@item.Id">Delete</a>
-            </td>
-        </tr>
-}
-    </tbody>
-</table>
+    <div class="table-responsive">
+        <table class="table table-striped table-bordered table-lg">
+            <thead class="thead-dark">
+                <tr>
+                    <th scope="col" class="text-lg">Genre Name</th>
+                    <th scope="col" class="text-lg">Actions</th>
+                </tr>
+            </thead>
+            <tbody>
+                @foreach (var item in Model)
+            {
+                <tr>
+                    <td class="text-lg">@Html.DisplayFor(modelItem => item.GenreName)</td>
+                    <td>
+                        @if (User.Identity.IsAuthenticated && User.IsInRole("Admin"))
+                        {
+                        <a class="btn btn-primary btn-lg mr-2" asp-action="Edit" asp-route-id="@item.Id">Edit</a>
+                        <a class="btn btn-danger btn-lg mr-2" asp-action="Delete" asp-route-id="@item.Id">Delete</a>
+                        }
+                        <a class="btn btn-info btn-lg" asp-action="Details" asp-route-id="@item.Id">Details</a>
+                    </td>
+                </tr>
+            }
+            </tbody>
+        </table>
+    </div>
